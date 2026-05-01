@@ -1,0 +1,55 @@
+.seccion-principal {
+    margin-left: 220px; 
+    padding: 20px;
+    display: block; 
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+
+.encabezado {
+    margin-bottom: 25px;
+}
+.encabezado h1 {
+    font-size: 24px;
+    color: #333;
+    margin: 0;
+}
+.encabezado p {
+    color: #666;
+    margin: 5px 0 0 0;
+}
+
+
+.tarjetas-container {
+    display: flex;
+    gap: 20px; 
+}
+
+
+.tarjeta {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    flex: 1; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tarjeta-titulo {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.tarjeta-valor {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1a1a1a;
+}
+
+.tarjeta-subtexto {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}
