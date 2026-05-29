@@ -1,0 +1,147 @@
+body {
+    margin: 0;
+    background: #f4f6f9;
+}
+
+.contenido {
+    margin-left: 220px;
+    padding: 30px;
+}
+
+h1 {
+    margin-bottom: 5px;
+    color: #1e3a5f;
+}
+
+h2{
+    color: #1e3a5f;
+}
+
+.subtitulo {
+    color: gray;
+    margin-bottom: 30px;
+}
+
+.tarjetas {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    width: 180px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
+    border-left: 5px solid;
+    box-sizing: border-box;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.temp {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.datos {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: gray;
+}
+
+.azul    { border-color: #2d7ff9; }
+.verde   { border-color: #2bb673; }
+.naranja { border-color: #ff9800; }
+.violeta { border-color: #9c4dff; }
+.celeste { border-color: #00bcd4; }
+.rojo    { border-color: #ff4d4d; }
+
+.tabla-contenedor {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
+    overflow-x: auto; /* scroll horizontal en mobile */
+}
+
+.tabla-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tabla-top input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 220px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+th {
+    background: #f0f2f5;
+    padding: 15px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    white-space: nowrap;
+}
+
+tr:hover {
+    background: #f8f9fb;
+}
+
+.estado {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.normal {
+    background: #dff5e3;
+    color: #1d8b3f;
+}
+
+.alerta {
+    background: #ffe7c2;
+    color: #d88900;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .contenido {
+        margin-left: 0;
+        padding: 70px 16px 20px;
+    }
+
+    .card {
+        width: 100%;
+    }
+
+    .tarjetas {
+        flex-direction: column;
+    }
+}

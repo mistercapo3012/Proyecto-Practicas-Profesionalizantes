@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensores</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="General.css">
+    <link rel="stylesheet" href="Sensores.css">
+</head>
+<body>
+    <!-- Botón hamburger (solo visible en mobile) -->
+    <button id="menu-toggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+    </button>
+    <!-- Overlay para cerrar menú tocando afuera -->
+    <div id="menu-overlay"></div>
+
+    <span id="Menu">
+        <h2>❄️ CÁMARA DE FRÍO</h2>
+
+        <ul id="menu">
+            <div class="opcion">
+                <li><a href="Inicio.html">Inicio</a></li>
+            </div>
+            <div class="opcion">
+                <li><a href="Temperaturas.html">Temperaturas</a></li>
+            </div>
+            <div class="opcion">
+                <li><a href="Sensores.html">Sensores</a></li>
+            </div>
+            <div class="opcion">
+                <li><a href="Historial.html">Historial</a></li>
+            </div>
+            <div class="opcion">
+                <li><a href="Alertas.html">Alertas</a></li>
+            </div>
+        </ul>
+    </span>
+
+
+
+    <div class="contenedor-principal">
+        <div class="encabezado">
+            <h2>Estado y Temperatura de las Cámaras</h2>
+        </div>
+
+        <div class="tarjeta">
+            <table class="tabla-sensores">
+                <thead>
+                    <tr>
+                        <th>Cámara</th>
+                        <th>Temperatura</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cámara 1</td>
+                        <td>1.8 °C</td>
+                        <td><span class="tag normal">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cámara 2</td>
+                        <td>2.1 °C</td>
+                        <td><span class="tag normal">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cámara 3</td>
+                        <td>1.9 °C</td>
+                        <td><span class="tag normal">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cámara 4</td>
+                        <td>0.6 °C</td>
+                        <td><span class="tag normal">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cámara 5</td>
+                        <td>1.6 °C</td>
+                        <td><span class="tag normal">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cámara 6</td>
+                        <td>0.6 °C</td>
+                        <td><span class="tag normal">Normal</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <script>
+        const toggle = document.getElementById("menu-toggle");
+        const sideMenu = document.getElementById("Menu");
+        const overlay = document.getElementById("menu-overlay");
+
+        toggle.addEventListener("click", () => {
+            sideMenu.classList.toggle("abierto");
+            overlay.classList.toggle("visible");
+        });
+        overlay.addEventListener("click", () => {
+            sideMenu.classList.remove("abierto");
+            overlay.classList.remove("visible");
+        });
+        document.querySelectorAll("#menu a").forEach(a => {
+            a.addEventListener("click", () => {
+                sideMenu.classList.remove("abierto");
+                overlay.classList.remove("visible");
+            });
+        });
+    </script>
+</body>
+</html>

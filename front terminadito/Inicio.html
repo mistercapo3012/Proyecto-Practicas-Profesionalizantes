@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cámara de Frío</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="General.css">
+    <link rel="stylesheet" href="Inicio.css">
+</head>
+<body>
+
+    <!-- Botón hamburger -->
+    <button id="menu-toggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+    </button>
+    <div id="menu-overlay"></div>
+
+    <span id="Menu">
+        <h2>❄️ CÁMARA DE FRÍO</h2>
+        <ul id="menu">
+            <div class="opcion">
+                <li><a href="Inicio.html">Inicio</a></li>
+            </div>
+            <div class="opcion">
+                <li><a href="Temperaturas.html">Temperaturas</a></li>
+            </div>
+            <div class="opcion">
+                <li><a href="Sensores.html">Sensores</a></li>
+            </div>
+            <div class="opcion">
+                <li><a href="Historial.html">Historial</a></li>
+            </div>
+            <div class="opcion">
+                <li><a href="Alertas.html">Alertas</a></li>
+            </div>
+        </ul>
+    </span>
+
+    <main class="inicio-main">
+
+        <div class="hero">
+            <div class="hero-icono">❄️</div>
+            <h1>Sistema de Monitoreo</h1>
+            <p class="hero-sub">Cámara de Frío — Control en tiempo real de las 6 cámaras</p>
+            <div class="estado-global">
+                <span class="punto-verde"></span>
+                Todos los sistemas operativos
+            </div>
+        </div>
+
+        <div class="cards-grid">
+
+            <a href="Temperaturas.html" class="card-nav">
+                <div class="card-icono">🌡️</div>
+                <div class="card-info">
+                    <h3>Temperaturas</h3>
+                    <p>Promedio actual, mínima y máxima de las últimas 24 hs</p>
+                </div>
+                <span class="card-arrow">→</span>
+            </a>
+
+            <a href="Sensores.html" class="card-nav">
+                <div class="card-icono">📡</div>
+                <div class="card-info">
+                    <h3>Sensores</h3>
+                    <p>Estado individual de cada sensor por cámara</p>
+                </div>
+                <span class="card-arrow">→</span>
+            </a>
+
+            <a href="Historial.html" class="card-nav">
+                <div class="card-icono">📋</div>
+                <div class="card-info">
+                    <h3>Historial</h3>
+                    <p>Registro diario detallado de todas las cámaras</p>
+                </div>
+                <span class="card-arrow">→</span>
+            </a>
+
+            <a href="Alertas.html" class="card-nav">
+                <div class="card-icono">🔔</div>
+                <div class="card-info">
+                    <h3>Alertas</h3>
+                    <p>Notificaciones activas por temperatura fuera de rango</p>
+                </div>
+                <span class="card-arrow">→</span>
+            </a>
+
+        </div>
+
+        <p class="pie">Última actualización: <span id="ultima-actualizacion"></span></p>
+
+    </main>
+
+    <script>
+        // Menú hamburger
+        const toggle = document.getElementById("menu-toggle");
+        const sideMenu = document.getElementById("Menu");
+        const overlay = document.getElementById("menu-overlay");
+
+        toggle.addEventListener("click", () => {
+            sideMenu.classList.toggle("abierto");
+            overlay.classList.toggle("visible");
+        });
+        overlay.addEventListener("click", () => {
+            sideMenu.classList.remove("abierto");
+            overlay.classList.remove("visible");
+        });
+        document.querySelectorAll("#menu a").forEach(a => {
+            a.addEventListener("click", () => {
+                sideMenu.classList.remove("abierto");
+                overlay.classList.remove("visible");
+            });
+        });
+
+        // Hora actual
+        const ahora = new Date();
+        document.getElementById("ultima-actualizacion").textContent =
+            ahora.toLocaleDateString("es-AR") + " " + ahora.toLocaleTimeString("es-AR", {hour: "2-digit", minute: "2-digit"});
+    </script>
+
+</body>
+</html>

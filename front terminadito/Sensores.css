@@ -1,0 +1,79 @@
+.contenedor-principal {
+    margin-left: 220px;
+    padding: 30px;
+    background-color: #f4f7f9;
+    min-height: 100vh;
+}
+
+.encabezado h2 {
+    color: #1e3a5f;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.tarjeta {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    overflow-x: auto; /* permite scroll horizontal en tablas en mobile */
+}
+
+.tabla-sensores {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    min-width: 300px;
+}
+
+.tabla-sensores th {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 2px solid #edf2f7;
+    color: #718096;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.tabla-sensores td {
+    padding: 15px;
+    border-bottom: 1px solid #edf2f7;
+    color: #2d3748;
+    font-size: 15px;
+}
+
+.tabla-sensores tr:hover {
+    background-color: #f8fafc;
+}
+
+.tag {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.tag.normal {
+    background-color: #def7ec;
+    color: #03543f;
+    border: 1px solid #84e1bc;
+}
+
+.tag.critico {
+    background-color: #fde8e8;
+    color: #9b1c1c;
+    border: 1px solid #f8b4b4;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .contenedor-principal {
+        margin-left: 0;
+        padding: 70px 16px 20px;
+    }
+}
