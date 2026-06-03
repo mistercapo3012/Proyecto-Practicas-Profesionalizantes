@@ -65,20 +65,17 @@ La API recibe los datos, los almacena en MySQL y la interfaz web los muestra en 
 ## Lo que vas a encontrar en el repo
 
 ```text
-📂 api/
-Endpoints para recibir y consultar datos.
+📂 Frontend 1.0/
+Etapa terminada del frontend, contiene el Inicio, Historial y Temperaturas.
 
-📂 config/
-Configuración de la base de datos y utilidades.
+📂 Backend 1.0/
+Etapa terminada del Backend, contiene los metodos post y get.
 
-📄 Inicio.html
-Pantalla principal del sistema.
+📂 DB 1.0/
+Etapa terminda de la DB, contiene credenciales de MySQL y funciones CORS y utilidades (no tocar).
 
-📄 Temperaturas.html
-Vista de monitoreo en tiempo real.
-
-📄 Historial.html
-Registro histórico de temperaturas.
+📄 LEE.ME.html
+Todo lo que necesitas saber del funcionamiento del proyecto, parte por parte.
 
 📄 schema.sql
 Script para crear la base de datos.
