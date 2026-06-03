@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperaturas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="General.css">
+    <link rel="stylesheet" href="Temperaturas.css">
+</head>
+<body>
+
+    <button id="menu-toggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+    </button>
+    <div id="menu-overlay"></div>
+
+    <span id="Menu">
+        <h2>❄️ CÁMARA DE FRÍO</h2>
+        <ul id="menu">
+            <div class="opcion"><li><a href="Inicio.html">Inicio</a></li></div>
+            <div class="opcion"><li><a href="Temperaturas.html">Temperaturas</a></li></div>
+            <div class="opcion"><li><a href="Historial.html">Historial</a></li></div>
+        </ul>
+    </span>
+
+    <div class="seccion-principal">
+
+        <div class="encabezado">
+            <h1>Monitoreo de Temperaturas</h1>
+            <p>Datos de las últimas 24 horas y estado actual por cámara</p>
+        </div>
+
+        <!-- ══ BLOQUE 1: Resumen global de las últimas 24 hs ══════════════ -->
+        <h2 class="seccion-titulo">Resumen Global — Últimas 24 hs</h2>
+
+        <div class="tarjetas-container">
+            <!-- Los valores se llenan con JavaScript -->
+            <div class="tarjeta">
+                <div class="tarjeta-titulo">Temperatura Promedio</div>
+                <div class="tarjeta-valor" id="avg-global">--</div>
+                <div class="tarjeta-subtexto">Promedio de todas las cámaras</div>
+            </div>
+            <div class="tarjeta">
+                <div class="tarjeta-titulo">Temperatura Mínima</div>
+                <div class="tarjeta-valor" id="min-global">--</div>
+                <div class="tarjeta-subtexto">Mínima registrada en 24 hs</div>
+            </div>
+            <div class="tarjeta">
+                <div class="tarjeta-titulo">Temperatura Máxima</div>
+                <div class="tarjeta-valor" id="max-global">--</div>
+                <div class="tarjeta-subtexto">Máxima registrada en 24 hs</div>
+            </div>
+        </div>
+
+        <!-- ══ BLOQUE 2: Estado individual de cada cámara ════════════════ -->
+        <h2 class="seccion-titulo">Estado Actual por Cámara</h2>
+
+        <!--
+            Este div se llena dinámicamente con JavaScript.
+            Cuando la página carga, muestra "Cargando..." y luego
+            JavaScript reemplaza el contenido con las tarjetas reales.
+        -->
+        <div class="camaras-grid" id="camaras-grid">
+            <div class="estado-carga">Cargando datos...</div>
+        </div>
+
+        <!-- Pie con hora de última actualización -->
+        <p class="pie-pagina">
+            Última actualización: <strong id="ultima-act">--</strong>
+            &nbsp;·&nbsp; Se actualiza automáticamente cada 5 minutos
+        </p>
+
+    </div><!-- fin .seccion-principal -->
+
+    <script>
+    // ══════════════════════════════════════════════════════════════════════════
+    // LÓGICA DE TEMPERATURAS.HTML
+    // ══════════════════════════════════════════════════════════════════════════
+    //
+    // Este script hace 3 cosas:
+    //   1. Pide datos a la API PHP (fetch)
+    //   2. Genera el HTML de las tarjetas con los datos reales
+    //   3. Se repite automáticamente cada 5 minutos
+    //
+    // Flujo:
+    //   cargarTodo()
+    //     ├── cargarStatsGlobales()  → GET api/get_stats.php?horas=24
+    //     └── cargarCamaras()       → GET api/get_stats_camaras.php
+
+    // ── Colores identificadores de cada cámara (mismo orden que Historial) ──
+    const COLORES_CAMARA = [
+        '#2d7ff9',  // Cámara 1 — azul
+        '#2bb673',  // Cámara 2 — verde
+        '#ff9800',  // Cámara 3 — naranja
+        '#9c4dff',  // Cámara 4 — violeta
+        '#00bcd4',  // Cámara 5 — celeste
+        '#ff4d4d'   // Cámara 6 — rojo
+    ];
+
+    // ── Rango de temperatura permitido ──────────────────────────────────────
+    const TEMP_MIN = 0;
+    const TEMP_MAX = 10;
+
+    // ── Helpers ─────────────────────────────────────────────────────────────
+
+    // ¿La temperatura está fuera del rango permitido?
+    function esAlerta(temp) {
+        return temp < TEMP_MIN || temp > TEMP_MAX;
+    }
+
+    // Formatea un número como "3.5 °C" o "Sin datos" si viene null
+    function formatTemp(val) {
+        if (val === null || val === undefined) return 'Sin datos';
+        return parseFloat(val).toFixed(1) + ' °C';
+    }
+
+    // Convierte "2024-06-01 14:30:00" (formato MySQL) a "01/06/2024 14:30" (legible)
+    // MySQL usa espacio entre fecha y hora; JavaScript necesita la letra "T" → replace
+    function formatFecha(fechaStr) {
+        if (!fechaStr) return '--';
+        const f = new Date(fechaStr.replace(' ', 'T'));
+        return f.toLocaleDateString('es-AR') + ' ' +
+               f.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ── Función 1: cargar estadísticas globales (últimas 24 hs) ────────────
+    async function cargarStatsGlobales() {
+        try {
+            // fetch() es una función nativa del navegador para hacer peticiones HTTP
+            // await espera a que la respuesta llegue antes de continuar
+            const respuesta = await fetch('api/get_stats.php?horas=24');
+            const datos     = await respuesta.json();  // convierte el JSON de texto a objeto JS
+
+            // Actualizamos el texto de cada tarjeta con getElementById
+            document.getElementById('avg-global').textContent =
+                datos.avg !== null ? formatTemp(datos.avg) : 'Sin datos';
+            document.getElementById('min-global').textContent =
+                datos.min !== null ? formatTemp(datos.min) : 'Sin datos';
+            document.getElementById('max-global').textContent =
+                datos.max !== null ? formatTemp(datos.max) : 'Sin datos';
+
+        } catch (error) {
+            // Si fetch falla (sin conexión, servidor apagado, etc.)
+            console.error('Error al cargar stats globales:', error);
+            ['avg-global', 'min-global', 'max-global'].forEach(id => {
+                document.getElementById(id).textContent = 'Error';
+            });
+        }
+    }
+
+    // ── Función 2: cargar estado individual de cada cámara ─────────────────
+    async function cargarCamaras() {
+        const grid = document.getElementById('camaras-grid');
+        try {
+            const respuesta = await fetch('api/get_stats_camaras.php');
+            const camaras   = await respuesta.json();
+
+            // Si no hay datos aún (base vacía), mostrar mensaje amigable
+            if (camaras.length === 0) {
+                grid.innerHTML = '<p class="sin-datos">Sin datos todavía. Esperando lecturas del hardware...</p>';
+                return;
+            }
+
+            // Para cada cámara, generamos una tarjeta HTML con sus datos
+            // Array.map() transforma cada elemento del array en un string HTML
+            // .join('') une todos los strings en uno solo
+            grid.innerHTML = camaras.map(cam => {
+
+                // Color del borde izquierdo: cada cámara tiene el suyo
+                // (cam.Camara - 1) porque el array empieza en 0 pero las cámaras en 1
+                // % 6 para que si hay más de 6 cámaras, los colores se repitan
+                const color     = COLORES_CAMARA[(cam.Camara - 1) % 6];
+                const alerta    = cam.actual !== null && esAlerta(cam.actual);
+                const claseTemp = alerta ? 'rango-alerta' : 'rango-ok';
+
+                // Template literal: string con ${ } para insertar valores de variables
+                return `
+                    <div class="camara-card" style="border-left-color: ${color}">
+                        <h3>Cámara ${cam.Camara}</h3>
+
+                        <div class="temp-grande ${claseTemp}">
+                            ${cam.actual !== null ? formatTemp(cam.actual) : 'Sin datos'}
+                        </div>
+
+                        <span class="badge ${claseTemp}">
+                            ${alerta ? '⚠ Fuera de rango' : '✓ Normal'}
+                        </span>
+
+                        <div class="min-max">
+                            <span>▼ Mín: ${formatTemp(cam.min)}</span>
+                            <span>▲ Máx: ${formatTemp(cam.max)}</span>
+                        </div>
+
+                        <div class="ultima-lectura">
+                            Última: ${formatFecha(cam.ultima_lectura)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error('Error al cargar cámaras:', error);
+            grid.innerHTML = '<p class="sin-datos">No se pudo conectar con la API. ¿Está corriendo XAMPP?</p>';
+        }
+    }
+
+    // ── Función principal: carga todo y actualiza la hora ──────────────────
+    async function cargarTodo() {
+        // Promise.all() ejecuta las dos funciones EN PARALELO (no una después de la otra)
+        // Espera a que AMBAS terminen antes de actualizar el timestamp
+        await Promise.all([cargarStatsGlobales(), cargarCamaras()]);
+
+        // Mostrar la hora de la última actualización
+        document.getElementById('ultima-act').textContent =
+            new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ── Ejecutar al cargar la página ────────────────────────────────────────
+    cargarTodo();
+
+    // ── Auto-refresh cada 5 minutos ─────────────────────────────────────────
+    // setInterval(función, milisegundos) llama a la función periódicamente
+    // 5 * 60 * 1000 = 300.000 ms = 5 minutos
+    setInterval(cargarTodo, 5 * 60 * 1000);
+
+    // ── Menú hamburger (igual en todas las páginas) ─────────────────────────
+    const toggle   = document.getElementById('menu-toggle');
+    const sideMenu = document.getElementById('Menu');
+    const overlay  = document.getElementById('menu-overlay');
+    toggle.addEventListener('click', () => {
+        sideMenu.classList.toggle('abierto');
+        overlay.classList.toggle('visible');
+    });
+    overlay.addEventListener('click', () => {
+        sideMenu.classList.remove('abierto');
+        overlay.classList.remove('visible');
+    });
+    document.querySelectorAll('#menu a').forEach(a => {
+        a.addEventListener('click', () => {
+            sideMenu.classList.remove('abierto');
+            overlay.classList.remove('visible');
+        });
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+/* ══════════════════════════════════════════════════════════
+   Historial.css — Estilos del historial de lecturas
+   ══════════════════════════════════════════════════════════ */
+
+body {
+    margin: 0;
+    background: #f4f6f9;
+    overflow-x: hidden; /* Sin scroll horizontal en ningún caso */
+}
+
+/* ── Contenedor principal ── */
+.contenido {
+    margin-left: 220px;
+    padding: 30px;
+}
+
+/* ── Encabezado ── */
+h1 {
+    margin: 0 0 4px;
+    color: #1e3a5f;
+    font-size: 24px;
+}
+
+h2 {
+    color: #1e3a5f;
+    font-size: 17px;
+    margin: 0;
+}
+
+.subtitulo {
+    color: #888;
+    margin: 0 0 24px;
+    font-size: 14px;
+}
+
+/* ══ TARJETAS RESUMEN POR CÁMARA ════════════════════════════════════════ */
+
+.tarjetas {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+}
+
+.card {
+    background: white;
+    min-width: 140px;
+    flex: 1;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    border-left: 5px solid;
+    box-sizing: border-box;
+}
+
+.card h3 {
+    margin: 0 0 10px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Temperatura actual — número grande dentro de la tarjeta de cámara */
+.card .temp {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 8px 0;
+    /* El color lo define la clase .rango-ok o .rango-alerta */
+}
+
+.datos {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #888;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Colores identificadores por cámara */
+.azul    { border-left-color: #2d7ff9; }
+.verde   { border-left-color: #2bb673; }
+.naranja { border-left-color: #ff9800; }
+.violeta { border-left-color: #9c4dff; }
+.celeste { border-left-color: #00bcd4; }
+.rojo    { border-left-color: #ff4d4d; }
+
+/* ══ COLORES CONDICIONALES DE TEMPERATURA ════════════════════════════════
+   Estas clases aplican en las tarjetas de cámara (.card .temp)
+   y también en los badges de la tabla y la lista mobile */
+
+.rango-ok    { color: #1d8b3f; }   /* Verde  — 0°C a 10°C     */
+.rango-alerta { color: #c0392b; }  /* Rojo   — <0°C o >10°C   */
+
+/* ══ BADGE DE TEMPERATURA (en tabla y lista mobile) ═════════════════════ */
+
+.temp-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.temp-badge.rango-ok {
+    background: #e8f5e9;
+    color: #1d8b3f;
+    border: 1px solid #a5d6a7;
+}
+
+.temp-badge.rango-alerta {
+    background: #fdecea;
+    color: #c0392b;
+    border: 1px solid #ef9a9a;
+}
+
+/* ══ CONTENEDOR DE LA TABLA / LISTA ══════════════════════════════════════ */
+
+.tabla-contenedor {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.tabla-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.info-actualizacion {
+    font-size: 12px;
+    color: #aaa;
+}
+
+/* Leyenda de colores */
+.leyenda {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* ══ TABLA DESKTOP ══════════════════════════════════════════════════════ */
+
+/* En desktop la tabla es visible; en mobile se oculta con media query */
+.tabla-desktop {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-desktop th {
+    background: #f0f2f5;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.tabla-desktop td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+}
+
+.tabla-desktop tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla-desktop tr:hover td {
+    background: #fafbfc;
+}
+
+/* ══ LISTA MOBILE (cards verticales) ════════════════════════════════════
+   En desktop: oculta. En mobile: se muestra.
+   Cada item es una card que ocupa todo el ancho → sin scroll horizontal. */
+
+.lista-mobile {
+    display: none;          /* oculta en desktop */
+    flex-direction: column; /* apiladas verticalmente */
+    gap: 10px;
+}
+
+.fila-mobile {
+    background: #f8f9fb;
+    border-radius: 8px;
+    padding: 12px 14px;
+    border-left: 3px solid #1e3a5f;
+}
+
+.fila-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.fila-camara {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1e3a5f;
+}
+
+.fila-fecha {
+    font-size: 12px;
+    color: #999;
+}
+
+/* ══ TEXTO DE CARGA / SIN DATOS ══════════════════════════════════════════ */
+
+.cargando-texto {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+/* ══ RESPONSIVE ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .contenido {
+        margin-left: 0;
+        padding: 70px 14px 20px; /* 70px arriba: espacio para el botón hamburger */
+    }
+
+    /* Las tarjetas de cámara se apilan en una columna */
+    .tarjetas {
+        flex-direction: column;
+    }
+
+    .card {
+        min-width: unset;
+        width: 100%;
+    }
+
+    /* Ocultar la tabla de desktop */
+    .tabla-desktop {
+        display: none;
+    }
+
+    /* Mostrar la lista vertical de cards */
+    .lista-mobile {
+        display: flex;
+    }
+
+    /* Encabezado de la sección de tabla */
+    .tabla-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

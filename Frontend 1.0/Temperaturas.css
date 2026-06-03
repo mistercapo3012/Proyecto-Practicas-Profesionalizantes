@@ -1,0 +1,198 @@
+/* ══════════════════════════════════════════════════════════
+   Temperaturas.css — Estilos de la página de monitoreo
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Contenedor principal ── */
+.seccion-principal {
+    margin-left: 220px;
+    padding: 30px 30px 40px;
+    background-color: #f4f7f9;
+    min-height: 100vh;
+}
+
+/* ── Encabezado de página ── */
+.encabezado {
+    margin-bottom: 20px;
+}
+
+.encabezado h1 {
+    font-size: 24px;
+    color: #1e3a5f;
+    margin: 0 0 4px;
+}
+
+.encabezado p {
+    color: #777;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ── Título de sección ── */
+.seccion-titulo {
+    color: #1e3a5f;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 28px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e8f0;
+}
+
+/* ══ TARJETAS RESUMEN GLOBAL ══════════════════════════════════════════════ */
+
+.tarjetas-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.tarjeta {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px 24px;
+    flex: 1;
+    min-width: 160px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.tarjeta-titulo {
+    color: #777;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.tarjeta-valor {
+    font-size: 30px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.tarjeta-subtexto {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+/* ══ GRID DE CÁMARAS INDIVIDUALES ════════════════════════════════════════ */
+
+/* 3 columnas en desktop, 2 en tablet, 1 en mobile */
+.camaras-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+/* Tarjeta individual de cámara */
+.camara-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 5px solid #ccc;   /* el color se sobreescribe en línea desde JS */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.camara-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e3a5f;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Temperatura actual — número grande */
+.temp-grande {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 4px 0;
+}
+
+/* Badge de estado (✓ Normal / ⚠ Fuera de rango) */
+.badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    width: fit-content;
+}
+
+/* Mínima y máxima históricas */
+.min-max {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Fecha/hora de la última lectura */
+.ultima-lectura {
+    font-size: 11px;
+    color: #bbb;
+    margin-top: 2px;
+}
+
+/* ══ CLASES DE COLOR (reutilizadas en Historial también) ════════════════ */
+
+/* Verde: temperatura dentro del rango 0°C – 10°C */
+.rango-ok           { color: #1d8b3f; }
+.badge.rango-ok     { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1d8b3f; }
+
+/* Rojo: temperatura fuera del rango (<0°C o >10°C) */
+.rango-alerta       { color: #c0392b; }
+.badge.rango-alerta { background: #fdecea; border: 1px solid #ef9a9a; color: #c0392b; }
+
+/* ══ MENSAJES DE ESTADO ══════════════════════════════════════════════════ */
+
+.estado-carga, .sin-datos {
+    color: #999;
+    font-size: 14px;
+    padding: 20px 0;
+    grid-column: 1 / -1;   /* ocupa todo el ancho del grid */
+    text-align: center;
+}
+
+/* ── Pie de página ── */
+.pie-pagina {
+    margin-top: 32px;
+    font-size: 12px;
+    color: #aaa;
+    text-align: right;
+}
+
+/* ══ RESPONSIVE ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+    .camaras-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .seccion-principal {
+        margin-left: 0;
+        padding: 70px 16px 30px;  /* 70px arriba: espacio para el botón hamburger */
+    }
+
+    .tarjetas-container {
+        flex-direction: column;
+    }
+
+    .camaras-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tarjeta-valor {
+        font-size: 24px;
+    }
+}

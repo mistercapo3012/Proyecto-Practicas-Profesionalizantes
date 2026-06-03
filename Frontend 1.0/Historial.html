@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="General.css">
+    <link rel="stylesheet" href="Historial.css">
+</head>
+<body>
+
+    <button id="menu-toggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+    </button>
+    <div id="menu-overlay"></div>
+
+    <span id="Menu">
+        <h2>❄️ CÁMARA DE FRÍO</h2>
+        <ul id="menu">
+            <div class="opcion"><li><a href="Inicio.html">Inicio</a></li></div>
+            <div class="opcion"><li><a href="Temperaturas.html">Temperaturas</a></li></div>
+            <div class="opcion"><li><a href="Historial.html">Historial</a></li></div>
+        </ul>
+    </span>
+
+    <div class="contenido">
+
+        <h1>Historial de Cámaras</h1>
+        <p class="subtitulo">Últimas 100 lecturas — se actualiza cada hora</p>
+
+        <!-- ══ TARJETAS RESUMEN POR CÁMARA ══════════════════════════════ -->
+        <!--
+            Este div se rellena con JavaScript.
+            Muestra la temperatura actual, mínima y máxima de cada cámara.
+            El color del borde izquierdo de cada tarjeta la identifica.
+        -->
+        <div class="tarjetas" id="tarjetas-camaras">
+            <p class="cargando-texto">Cargando resumen por cámara...</p>
+        </div>
+
+        <!-- ══ TABLA DE REGISTRO DETALLADO ══════════════════════════════ -->
+        <div class="tabla-contenedor">
+
+            <div class="tabla-top">
+                <h2>Registro Detallado</h2>
+                <span class="info-actualizacion">
+                    Actualizado: <strong id="hora-actualizacion">--</strong>
+                    &nbsp;·&nbsp; Próxima actualización en 1 hora
+                </span>
+            </div>
+
+            <!--
+                LEYENDA DE COLORES
+                Explica el significado de verde y rojo al usuario
+            -->
+            <div class="leyenda">
+                <span class="temp-badge rango-ok">0°C – 10°C</span> Temperatura normal
+                &nbsp;&nbsp;
+                <span class="temp-badge rango-alerta">&lt;0°C o &gt;10°C</span> Fuera de rango
+            </div>
+
+            <!--
+                TABLA — visible en desktop (pantallas anchas)
+                Se oculta en mobile y se muestra la lista de cards en su lugar.
+                Columnas: Fecha y Hora | Cámara | Temperatura
+            -->
+            <table class="tabla-desktop">
+                <thead>
+                    <tr>
+                        <th>Fecha y Hora</th>
+                        <th>Cámara</th>
+                        <th>Temperatura</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-body">
+                    <!-- Las filas se generan con JavaScript -->
+                    <tr>
+                        <td colspan="3" class="cargando-texto">Cargando registros...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!--
+                LISTA MOBILE — visible solo en mobile (pantallas angostas)
+                Cada lectura se muestra como una card apilada verticalmente.
+                No hay scroll horizontal: la información fluye hacia abajo.
+            -->
+            <div class="lista-mobile" id="lista-mobile">
+                <p class="cargando-texto">Cargando registros...</p>
+            </div>
+
+        </div><!-- fin .tabla-contenedor -->
+
+    </div><!-- fin .contenido -->
+
+    <script>
+    // ══════════════════════════════════════════════════════════════════════════
+    // LÓGICA DE HISTORIAL.HTML
+    // ══════════════════════════════════════════════════════════════════════════
+    //
+    // Flujo:
+    //   cargarTodo()
+    //     ├── cargarCamaras()  → GET api/get_stats_camaras.php  (tarjetas resumen)
+    //     └── cargarTabla()    → GET api/get_latest.php?n=100   (tabla + lista mobile)
+    //
+    // Auto-refresh: cada 1 hora (3.600.000 ms)
+
+    // ── Colores e identificadores por cámara ────────────────────────────────
+    // El índice 0 corresponde a la Cámara 1, el 1 a la Cámara 2, etc.
+    const CLASES_CARD = ['azul', 'verde', 'naranja', 'violeta', 'celeste', 'rojo'];
+
+    // ── Rango permitido ─────────────────────────────────────────────────────
+    const TEMP_MIN = 0;
+    const TEMP_MAX = 10;
+
+    // ── Helpers ─────────────────────────────────────────────────────────────
+
+    function esAlerta(temp) {
+        return temp < TEMP_MIN || temp > TEMP_MAX;
+    }
+
+    // Devuelve 'rango-alerta' (rojo) o 'rango-ok' (verde) según la temperatura
+    function getClase(temp) {
+        return esAlerta(temp) ? 'rango-alerta' : 'rango-ok';
+    }
+
+    function formatTemp(val) {
+        if (val === null || val === undefined) return 'Sin datos';
+        return parseFloat(val).toFixed(1) + ' °C';
+    }
+
+    // Convierte "2024-06-01 14:30:00" → "01/06/2024 14:30"
+    function formatFecha(fechaStr) {
+        if (!fechaStr) return '--';
+        const f = new Date(fechaStr.replace(' ', 'T'));
+        return f.toLocaleDateString('es-AR', {
+                   day: '2-digit', month: '2-digit', year: 'numeric'
+               }) + ' ' +
+               f.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ── Función 1: tarjetas de resumen por cámara ────────────────────────────
+    async function cargarCamaras() {
+        const contenedor = document.getElementById('tarjetas-camaras');
+        try {
+            const respuesta = await fetch('api/get_stats_camaras.php');
+            const camaras   = await respuesta.json();
+
+            if (!camaras.length) {
+                contenedor.innerHTML = '<p class="cargando-texto">Sin datos aún. Esperando lecturas del hardware.</p>';
+                return;
+            }
+
+            contenedor.innerHTML = camaras.map(cam => {
+                // Clase CSS de color: azul para cámara 1, verde para 2, etc.
+                const claseCard = CLASES_CARD[(cam.Camara - 1) % 6];
+                // Clase para el color de la temperatura: verde o rojo
+                const claseTemp = cam.actual !== null ? getClase(cam.actual) : '';
+
+                return `
+                    <div class="card ${claseCard}">
+                        <h3>Cámara ${cam.Camara}</h3>
+                        <p class="temp ${claseTemp}">${formatTemp(cam.actual)}</p>
+                        <div class="datos">
+                            <span>Mín: ${formatTemp(cam.min)}</span>
+                            <span>Máx: ${formatTemp(cam.max)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (err) {
+            console.error('Error al cargar cámaras:', err);
+            contenedor.innerHTML = '<p class="cargando-texto">Error al conectar con la API.</p>';
+        }
+    }
+
+    // ── Función 2: tabla de lecturas (desktop) + lista mobile ────────────────
+    async function cargarTabla() {
+        const tbody      = document.getElementById('tabla-body');
+        const listaMobile = document.getElementById('lista-mobile');
+
+        try {
+            const respuesta = await fetch('api/get_latest.php?n=100');
+            const filas     = await respuesta.json();
+
+            if (!filas.length) {
+                tbody.innerHTML       = '<tr><td colspan="3" class="cargando-texto">No hay registros aún.</td></tr>';
+                listaMobile.innerHTML = '<p class="cargando-texto">No hay registros aún.</p>';
+                return;
+            }
+
+            // ── Desktop: generar filas de la tabla ──────────────────────────
+            // cada <tr> tiene una <td> con la temperatura dentro de un badge de color
+            tbody.innerHTML = filas.map(fila => {
+                const clase = getClase(fila.Temp);
+                return `
+                    <tr>
+                        <td>${formatFecha(fila.FechaHora)}</td>
+                        <td>Cámara ${fila.Camara}</td>
+                        <td>
+                            <span class="temp-badge ${clase}">${formatTemp(fila.Temp)}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // ── Mobile: generar cards apiladas verticalmente ─────────────────
+            // Cada card muestra: nombre de cámara + temperatura (con color) + fecha
+            // Al ser flex-direction: column (en CSS), se apilan sin scroll horizontal
+            listaMobile.innerHTML = filas.map(fila => {
+                const clase = getClase(fila.Temp);
+                return `
+                    <div class="fila-mobile">
+                        <div class="fila-top">
+                            <span class="fila-camara">Cámara ${fila.Camara}</span>
+                            <span class="temp-badge ${clase}">${formatTemp(fila.Temp)}</span>
+                        </div>
+                        <div class="fila-fecha">${formatFecha(fila.FechaHora)}</div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (err) {
+            console.error('Error al cargar tabla:', err);
+            tbody.innerHTML       = '<tr><td colspan="3" class="cargando-texto">Error al cargar datos.</td></tr>';
+            listaMobile.innerHTML = '<p class="cargando-texto">Error al cargar datos.</p>';
+        }
+    }
+
+    // ── Función principal ────────────────────────────────────────────────────
+    async function cargarTodo() {
+        await Promise.all([cargarCamaras(), cargarTabla()]);
+        document.getElementById('hora-actualizacion').textContent =
+            new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ── Ejecutar al cargar y luego cada 1 hora ───────────────────────────────
+    cargarTodo();
+    // 60 * 60 * 1000 = 3.600.000 ms = 1 hora
+    setInterval(cargarTodo, 60 * 60 * 1000);
+
+    // ── Menú hamburger ───────────────────────────────────────────────────────
+    const toggle   = document.getElementById('menu-toggle');
+    const sideMenu = document.getElementById('Menu');
+    const overlay  = document.getElementById('menu-overlay');
+    toggle.addEventListener('click', () => {
+        sideMenu.classList.toggle('abierto');
+        overlay.classList.toggle('visible');
+    });
+    overlay.addEventListener('click', () => {
+        sideMenu.classList.remove('abierto');
+        overlay.classList.remove('visible');
+    });
+    document.querySelectorAll('#menu a').forEach(a => {
+        a.addEventListener('click', () => {
+            sideMenu.classList.remove('abierto');
+            overlay.classList.remove('visible');
+        });
+    });
+    </script>
+
+</body>
+</html>
