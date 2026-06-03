@@ -194,5 +194,5 @@ Más allá de ser una práctica académica, el objetivo fue desarrollar una solu
 ---
 
 <p align="center">
-Desarrollado para Prácticas Profesionalizantes • 2026
+Desarrollado para Prácticas Profesionalizantes - ccmrc • 2026
 </p>
